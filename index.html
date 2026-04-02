@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cassie Loveletters | Unsent Letters</title>
+    <meta
+      name="description"
+      content="A quiet archive of letters that could never be sent."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-image: url("https://blogger.googleusercontent.com/img/a/AVvXsEirxfqRzMrHWAtGj6OvujiQLPzBkcAePHCzg-Jjvwl4Xn6HqqR7thXnzjfU_5AYRAbM5YAeinYmAaeiYHbF2EwW7JHR973a5sGce4aLcJfXvCIfxIBe864IXcZ1bgy_3veAX3LPh2HtinTCAVK1jSjtEk7ZW8x1cydzEjtMi0eAgFIYSHvy8j_elv1vWy4");
+        --paper: #f4efe6;
+        --paper-deep: #f2eadf;
+        --ink: #444444;
+        --ink-soft: #6c655e;
+        --rose: #ab7f87;
+        --line: rgba(129, 108, 92, 0.14);
+        --shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        --stamp-image: url("https://blogger.googleusercontent.com/img/a/AVvXsEgoWrPqfDRdUWIyvE4tmQWJEf-De6F4FUollW_qjkYDGdSGzwrvXG1nrFlqr0_Prien-mNldLhLYro0ZKcFJ2z4l4Om3KPTh-KCRSjAIY6_JJ9oB23sDQB2eJLACke3UKAOBao-caEMBkWgWLWrqnI_tN_pmPTwlm5zo9dAD9uLr4o3l93akFCuSibzlD8");
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        min-height: 100%;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Cormorant Garamond", serif;
+        color: var(--ink);
+        background: var(--bg-image) center / cover fixed;
+        overflow-x: hidden;
+        opacity: 0;
+        transition: opacity 1.4s ease;
+      }
+
+      body.is-ready {
+        opacity: 1;
+      }
+
+      body.modal-open {
+        overflow: hidden;
+      }
+
+      .page-shell {
+        position: relative;
+        min-height: 100vh;
+        padding: 34px 18px 44px;
+      }
+
+      .archive-head {
+        text-align: center;
+        margin-bottom: 28px;
+      }
+
+      .archive-head__eyebrow {
+        margin: 0 0 8px;
+        color: rgba(255, 245, 238, 0.86);
+        letter-spacing: 0.28em;
+        text-transform: lowercase;
+        font-size: 0.8rem;
+        text-shadow: 0 2px 10px rgba(9, 8, 12, 0.2);
+      }
+
+      .archive-head h1 {
+        margin: 0;
+        font-size: clamp(2.8rem, 7vw, 5rem);
+        font-weight: 500;
+        color: #f7efe8;
+        text-shadow: 0 4px 18px rgba(11, 9, 14, 0.22);
+      }
+
+      .archive-head__copy {
+        width: min(100%, 560px);
+        margin: 10px auto 0;
+        line-height: 1.75;
+        font-size: 1.05rem;
+        color: rgba(248, 241, 235, 0.82);
+        text-shadow: 0 2px 12px rgba(11, 9, 14, 0.18);
+      }
+
+      .letters-field {
+        position: relative;
+        width: min(100%, 1040px);
+        margin: 0 auto;
+        min-height: 520px;
+        padding: 10px 0 40px;
+      }
+
+      .letters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(130px, 130px));
+        justify-content: center;
+        gap: 24px 28px;
+      }
+
+      .letter-icon {
+        appearance: none;
+        border: 0;
+        background: transparent;
+        padding: 0;
+        cursor: pointer;
+        text-align: center;
+        font: inherit;
+        transition: transform 0.25s ease, filter 0.25s ease;
+      }
+
+      .letter-icon:hover,
+      .letter-icon:focus-visible {
+        transform: translateY(-4px) scale(1.02);
+        filter: brightness(1.04);
+      }
+
+      .letter-icon__art {
+        display: block;
+        width: 118px;
+        margin: 0 auto;
+        transform: rotate(var(--rotation, -2deg));
+      }
+
+      .letter-icon__art img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 1 / 0.75;
+        object-fit: cover;
+        filter: drop-shadow(0 10px 24px rgba(10, 8, 12, 0.14));
+      }
+
+      .overlay {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        padding: 24px 16px;
+        background: rgba(14, 12, 18, 0.52);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.45s ease;
+        z-index: 50;
+      }
+
+      .overlay.is-open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .letter-modal {
+        position: relative;
+        width: min(100%, 720px);
+        height: min(86vh, 760px);
+        opacity: 0;
+        transform: translateY(16px) scale(0.95);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+      }
+
+      .overlay.is-open .letter-modal {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+
+      .letter-modal__close {
+        position: absolute;
+        top: 12px;
+        right: 14px;
+        border: 0;
+        background: transparent;
+        color: rgba(80, 71, 64, 0.66);
+        font-size: 1.9rem;
+        cursor: pointer;
+        z-index: 5;
+      }
+
+      .envelope-image {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: min(100%, 560px);
+        transform: translate(-50%, -50%);
+        cursor: pointer;
+        transition: transform 0.25s ease, filter 0.25s ease, opacity 0.35s ease;
+        z-index: 4;
+      }
+
+      .envelope-image:hover,
+      .envelope-image:focus-visible {
+        transform: translate(-50%, -50%) scale(1.02);
+        filter: brightness(1.03);
+      }
+
+      .letter-modal__title {
+        position: absolute;
+        left: -110px;
+        top: 50%;
+        width: min(150px, calc(100vw - 32px));
+        margin: 0;
+        transform: translateY(-50%);
+        font-family: "Lucida Sans", "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1.5;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        text-align: left;
+        color: rgba(244, 239, 230, 0.9);
+        text-shadow: 0 2px 10px rgba(11, 9, 14, 0.25);
+        text-wrap: balance;
+        transition: opacity 0.28s ease, transform 0.28s ease;
+        z-index: 4;
+      }
+
+      .overlay.is-letter-open .envelope-image {
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-50%, -46%) scale(0.96);
+      }
+
+      .overlay.is-letter-open .letter-modal__title {
+        opacity: 0;
+        transform: translateY(calc(-50% - 10px));
+        pointer-events: none;
+      }
+
+      .letter-sheet {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: min(100%, 620px);
+        max-height: min(72vh, 640px);
+        overflow: auto;
+        padding: 34px 36px 30px;
+        border-radius: 6px;
+        background:
+          linear-gradient(180deg, rgba(255, 252, 247, 0.92), rgba(244, 239, 230, 0.94)),
+          linear-gradient(180deg, var(--paper), var(--paper-deep));
+        border: 1px solid rgba(129, 108, 92, 0.16);
+        box-shadow: var(--shadow);
+        color: var(--ink);
+        transform: translate(-50%, -42%) translateY(72px) scale(0.95) rotate(-1deg);
+        opacity: 0;
+        transition: transform 0.58s ease, opacity 0.58s ease;
+        z-index: 2;
+      }
+
+      .overlay.is-letter-open .letter-sheet {
+        transform: translate(-50%, -50%) translateY(0) scale(1) rotate(-1deg);
+        opacity: 1;
+      }
+
+      .letter-sheet::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+          linear-gradient(transparent, rgba(124, 106, 91, 0.03)),
+          radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.35), transparent 32%);
+        mix-blend-mode: multiply;
+      }
+
+      .letter-sheet::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 50%;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(121, 101, 84, 0.18), transparent);
+        box-shadow: 0 1px 10px rgba(94, 76, 61, 0.08);
+        pointer-events: none;
+      }
+
+      .letter-modal__meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 18px;
+        font-size: 0.98rem;
+        color: var(--ink-soft);
+      }
+
+      .letter-modal__to {
+        margin: 0 0 20px;
+        font-size: 1.3rem;
+        font-weight: 500;
+      }
+
+      .letter-modal__body {
+        font-size: 1.08rem;
+        line-height: 1.82;
+        white-space: pre-line;
+      }
+
+      .letter-modal__signoff {
+        margin-top: 28px;
+        text-align: right;
+        font-size: 1.12rem;
+        line-height: 1.8;
+      }
+
+      .letter-modal__signature {
+        display: block;
+        margin-top: 8px;
+        font-size: 1.45rem;
+      }
+
+      @media (max-width: 720px) {
+        .letters-grid {
+          grid-template-columns: repeat(auto-fit, minmax(112px, 112px));
+          gap: 20px 18px;
+        }
+
+        .letter-icon__art {
+          width: 102px;
+        }
+
+        .letter-sheet {
+          width: min(100%, 92vw);
+          padding: 28px 20px 24px;
+        }
+
+        .letter-modal__title {
+          left: -48px;
+          width: min(120px, calc(100vw - 24px));
+        }
+
+        .letter-modal__signoff {
+          text-align: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="archive-head">
+        <p class="archive-head__eyebrow">cassie loveletters</p>
+        <h1>unsent letters</h1>
+        <p class="archive-head__copy">
+          Open a letter gently. Some things were only ever meant to be read in
+          private.
+        </p>
+      </header>
+
+      <main class="letters-field">
+        <section class="letters-grid" aria-label="Letter archive"></section>
+      </main>
+    </div>
+
+    <div class="overlay" hidden>
+      <article class="letter-modal" role="dialog" aria-modal="true" aria-labelledby="letter-title">
+        <button class="letter-modal__close" type="button" aria-label="Close letter">×</button>
+        <p class="letter-modal__title" data-title></p>
+        <img
+          class="envelope-image"
+          data-envelope-image
+          src="https://blogger.googleusercontent.com/img/a/AVvXsEi6j4wGEGYQw4_YrJy9FgnZwWVu75VN2IXTS097d-wtAm8RuSWwIrXie-f-Lgr8LNAxU3X0VhWTypGjuPgDE1QYnMW1f1gFbW8WY7QJJomeCkBjMYR2EjimqwwJKhqeSNi1WEFgBGUAIytbYnL44teLfhJ6ehEGnCPRakLYQcRiGgDMxRA1KA4W3qiFxcs"
+          alt="Envelope"
+        />
+        <div class="letter-sheet">
+          <div class="letter-modal__meta">
+            <div data-from></div>
+            <div data-date></div>
+          </div>
+          <h2 class="letter-modal__to" id="letter-title" data-to></h2>
+          <div class="letter-modal__body" data-body></div>
+          <div class="letter-modal__signoff">
+            <div data-signoff></div>
+            <span class="letter-modal__signature" data-signature></span>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <script>
+      /*
+        EDIT HERE
+        1. Change backgroundImage to swap the site background.
+        2. Edit or add letters in the letters array.
+        3. Each letter needs:
+           title, from, to, date, body, signoff, signature
+      */
+      const archiveConfig = {
+        backgroundImage:
+          "https://blogger.googleusercontent.com/img/a/AVvXsEirxfqRzMrHWAtGj6OvujiQLPzBkcAePHCzg-Jjvwl4Xn6HqqR7thXnzjfU_5AYRAbM5YAeinYmAaeiYHbF2EwW7JHR973a5sGce4aLcJfXvCIfxIBe864IXcZ1bgy_3veAX3LPh2HtinTCAVK1jSjtEk7ZW8x1cydzEjtMi0eAgFIYSHvy8j_elv1vWy4",
+        letters: [
+          /*
+            Letter template:
+            {
+              title: "your title here",
+              from: "from ...",
+              to: "To ...",
+              date: "april 2, 2026",
+              body:
+                "Write your letter here...\n\nUse \\n\\n to create a new paragraph.",
+              signoff: "with love,",
+              signature: "Cassie",
+            },
+          */
+          {
+            title: "to the one I keep waiting to see again",
+            from: "from the small town that still keeps your shape",
+            to: "To the one I keep waiting to see again,",
+            date: "april 2, 2026",
+            body:
+              "I have thought of so many reasons to say this to you.\n\nI have imagined softer beginnings, clearer middles, and endings that would not tremble this much. But when I strip all of it away, the truth is simple: I just want to see you.\n\nAnd still, I keep quiet.\n\nBecause I am afraid of wanting something alone. Afraid that if I say it out loud, you will not have been thinking of the same thing at all. So I leave everything suspended between us and tell myself I can wait until next time.\n\nBut how many next times are really left for us?\n\nI am only scared that one day you will grow tired of coming back to this small town. That you will stop returning to the streets that know us, stop folding yourself back into the place where I am still standing. The city that never sleeps, and all the people who shine there, seem to suit you so well. I know that.\n\nFor a long time, I thought that when this place no longer gave you a reason to come home, you would let go of those days too. The days that, to me, were once the most beautiful I had ever known.\n\nI told myself maybe you would forget our town. But maybe that was never what frightened me most. Maybe what I feared was that I would never be enough to become a reason for you to return.\n\nSo I say none of this. I let the words stay here instead, unfinished and unseen, hoping that somewhere in another version of this story, I was brave enough to ask if you wanted to see me too.",
+            signoff: "still waiting for a reason to call it soon,",
+            signature: "Cassie",
+          },
+          {
+            title: "vào một ngày nào đó, mình sẽ thôi bận lòng",
+            from: "from the night that felt too loud to survive quietly",
+            to: "To the version of me that is still trying to stay,",
+            date: "april 2, 2026",
+            body:
+              "vào một ngày nào đó, nếu như những vết thương từ quá khứ trở lại và đánh cậu ngã như thứ đồ đáng bỏ đi. cậu liệu còn đủ sức để lặp lại câu \"dừng lại dừng lại dừng lại\" để xin chúng đừng đến đây nữa không. đầu vùi xuống mặt bàn, chân cố gắng đứng vững đến khi chạy tới nơi bị lắp đầy bằng những âm thanh lớn, thật lớn, chỉ cần đừng nghe thấy suy nghĩ trong cái đầu tiêu cực.\n\ncậu đã khóc thật lớn cho đến khi tiếng nhạc ấy dần nhỏ dần nhỏ dần, nhỏ dần. để lại yên tĩnh chỉ để cậu nghe rõ tiếng nấc của bản thân nghe thảm hại vô cùng. làm một ai đó thất vọng, nhận ra những niềm tin tự dựng để an ủi bản thân vốn mỏng manh và sự thật cậu sợ vẫn ở đó.\n\n\"cha biết con tốt hơn như vậy mà.\"\n\"cha tin con làm được như này mà.\"\n\"cố gắng chút là làm được.\"\n\nnhưng cậu sợ rằng bản thân vốn không làm được, hay tất cả những gì cậu đã xây dựng, bao lần thất bại, một hai lần cậu nghĩ đã thành công, rằng trông nó không quá tệ - nó vẫn tệ vậy đấy, rằng nó vẫn là không đủ như thế đấy. rồi cậu chạy khỏi chỗ đó, cậu khóc, mắt cậu ướt trước khi cậu nhận ra, những giọt lệ rơi từ tốn bên mắt trái cậu cho đến khi nó nổ bùng như pháo hoa, cậu có chối bỏ như nào vẫn sẽ nghe thấy tiếng nấc khàn giọng đằng sau lớp nhạc buồn. sợ hãi ai đó sẽ biết được, cậu dùng gối để che đi.\n\nnhưng cậu cũng muốn ai đó sẽ biết được.\n\ncậu sợ bị thấy nhưng cậu cũng muốn được quan tâm, cậu nghĩ biết đâu nếu ai đó thấy cậu thảm thương như này, sẽ chạy đến, biết đâu được, ôm cậu, xoa đầu cậu, nói rằng cậu đã làm tốt rồi, chỉ cần tiếp tục phát huy thôi. nhưng dù cho điều này là vô nghĩa, hay cậu có căm ghét nó, cứ khóc một trận cho đã đi.\n\nchắc là cậu chỉ muốn được yêu thương đúng cách cậu ước.\nhoặc là mình cũng chỉ muốn được yêu thương theo đúng cách mà mình ước.\n\nrồi sẽ có ngày, mình không còn bận lòng về việc này nữa.\n\nrồi sẽ có ngày ấy",
+            signoff: "for the part of me that still wants to be held,",
+            signature: "Cassie",
+          },
+          {
+            title: "to the version of me who stayed",
+            from: "from the room I never left",
+            to: "To the version of me who stayed,",
+            date: "april 2, 2026",
+            body:
+              "I still think about the life you would have built if you had not stepped away when it hurt.\n\nMaybe you would have grown into someone gentler, or maybe you would have become tired in ways I cannot imagine. I only know that sometimes I miss the person I was trying so hard to become.\n\nIf you are somewhere inside me still, I hope you know I did not leave because I stopped loving you. I left because I could not keep carrying us both through every season alone.",
+            signoff: "with what tenderness I still have,",
+            signature: "Cassie",
+          },
+          {
+            title: "to someone I miss in spring",
+            from: "from a late spring evening",
+            to: "To someone I miss in spring,",
+            date: "march 18, 2026",
+            body:
+              "The weather became gentle again and I thought of you immediately.\n\nIt felt unfair that a season could remember you more easily than I was ever allowed to. I wanted to tell you about the pale light on my floor, the songs I saved for no one, and the way your name still sounds like something unfinished.\n\nI never sent this because missing you was easier than knowing whether you had forgotten me.",
+            signoff: "still looking toward your side of the room,",
+            signature: "Cassie",
+          },
+          {
+            title: "to the friend I outgrew too softly",
+            from: "from the edge of an old friendship",
+            to: "To the friend I outgrew too softly,",
+            date: "january 6, 2026",
+            body:
+              "I think some friendships do not break. They loosen.\n\nNo one says the wrong thing. No one leaves dramatically. The distance just gathers like dust in the corners until one day you realize you no longer know where to place your tenderness.\n\nI wanted to keep you without pretending we were still the same people. I never found a graceful way to say that.",
+            signoff: "with gratitude and a little ache,",
+            signature: "Cassie",
+          },
+          {
+            title: "to the house that no longer knows me",
+            from: "from the street that changed first",
+            to: "To the house that no longer knows me,",
+            date: "november 27, 2025",
+            body:
+              "Sometimes I dream of your windows exactly as they were, before time replaced the curtains and erased the sounds I used to trust.\n\nI know a house is only a body for memory, but I still wanted yours to keep mine. I wanted the hallway, the doorframe, the kitchen light, all of it, to remember the version of me that once fit there.\n\nIt hurts to know a place can go on without holding your shape.",
+            signoff: "from someone who still looks back,",
+            signature: "Cassie",
+          },
+        ],
+      };
+
+      document.documentElement.style.setProperty(
+        "--bg-image",
+        `url("${archiveConfig.backgroundImage}")`
+      );
+
+      const grid = document.querySelector(".letters-grid");
+      const overlay = document.querySelector(".overlay");
+      const modal = document.querySelector(".letter-modal");
+      const closeButton = document.querySelector(".letter-modal__close");
+      const envelopeImage = document.querySelector("[data-envelope-image]");
+      let audioContext;
+      const paperTurnAudio = new Audio(
+        "https://www.orangefreesounds.com/wp-content/uploads/2018/07/Page-turn-sound-effect.mp3"
+      );
+      paperTurnAudio.preload = "auto";
+      paperTurnAudio.volume = 0.75;
+
+      const fields = {
+        title: document.querySelector("[data-title]"),
+        from: document.querySelector("[data-from]"),
+        date: document.querySelector("[data-date]"),
+        to: document.querySelector("[data-to]"),
+        body: document.querySelector("[data-body]"),
+        signoff: document.querySelector("[data-signoff]"),
+        signature: document.querySelector("[data-signature]"),
+      };
+
+      function openLetter(letter) {
+        fields.title.textContent = letter.title;
+        fields.from.textContent = letter.from;
+        fields.date.textContent = letter.date;
+        fields.to.textContent = letter.to;
+        fields.body.textContent = letter.body;
+        fields.signoff.textContent = letter.signoff;
+        fields.signature.textContent = letter.signature;
+
+        overlay.hidden = false;
+        requestAnimationFrame(() => {
+          overlay.classList.add("is-open");
+          document.body.classList.add("modal-open");
+          overlay.classList.remove("is-letter-open");
+        });
+      }
+
+      function playPaperOpenSfx() {
+        paperTurnAudio.currentTime = 0;
+
+        const playRemoteAudio = paperTurnAudio.play();
+
+        if (playRemoteAudio && typeof playRemoteAudio.then === "function") {
+          playRemoteAudio.catch(() => {
+            playSynthPaperOpenSfx();
+          });
+          return;
+        }
+
+        playSynthPaperOpenSfx();
+      }
+
+      function playSynthPaperOpenSfx() {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+
+        if (!AudioContextClass) {
+          return;
+        }
+
+        if (!audioContext) {
+          audioContext = new AudioContextClass();
+        }
+
+        if (audioContext.state === "suspended") {
+          audioContext.resume();
+        }
+
+        const now = audioContext.currentTime;
+        const duration = 0.92;
+
+        const noiseBuffer = audioContext.createBuffer(
+          1,
+          audioContext.sampleRate * duration,
+          audioContext.sampleRate
+        );
+        const noiseData = noiseBuffer.getChannelData(0);
+
+        for (let i = 0; i < noiseData.length; i += 1) {
+          const ageTexture = Math.sin(i / 23) * 0.18 + Math.sin(i / 61) * 0.12;
+          noiseData[i] = ((Math.random() * 2 - 1) * 0.72 + ageTexture) * (1 - i / noiseData.length);
+        }
+
+        const noiseSource = audioContext.createBufferSource();
+        noiseSource.buffer = noiseBuffer;
+
+        const bandpass = audioContext.createBiquadFilter();
+        bandpass.type = "bandpass";
+        bandpass.frequency.setValueAtTime(1080, now);
+        bandpass.frequency.exponentialRampToValueAtTime(820, now + duration);
+        bandpass.Q.setValueAtTime(1.15, now);
+
+        const highpass = audioContext.createBiquadFilter();
+        highpass.type = "highpass";
+        highpass.frequency.setValueAtTime(320, now);
+
+        const lowpass = audioContext.createBiquadFilter();
+        lowpass.type = "lowpass";
+        lowpass.frequency.setValueAtTime(1850, now);
+
+        const crackleGain = audioContext.createGain();
+        crackleGain.gain.setValueAtTime(0.0001, now);
+        crackleGain.gain.exponentialRampToValueAtTime(0.12, now + 0.03);
+        crackleGain.gain.exponentialRampToValueAtTime(0.025, now + 0.3);
+        crackleGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+        const gainNode = audioContext.createGain();
+        gainNode.gain.setValueAtTime(0.0001, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.12, now + 0.06);
+        gainNode.gain.exponentialRampToValueAtTime(0.038, now + 0.28);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+        noiseSource.connect(bandpass);
+        bandpass.connect(highpass);
+        highpass.connect(lowpass);
+        lowpass.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        const foldOscillator = audioContext.createOscillator();
+        const foldGain = audioContext.createGain();
+        foldOscillator.type = "sawtooth";
+        foldOscillator.frequency.setValueAtTime(180, now);
+        foldOscillator.frequency.exponentialRampToValueAtTime(108, now + 0.22);
+        foldGain.gain.setValueAtTime(0.0001, now);
+        foldGain.gain.exponentialRampToValueAtTime(0.018, now + 0.04);
+        foldGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.26);
+        foldOscillator.connect(foldGain);
+        foldGain.connect(audioContext.destination);
+
+        const crackleSource = audioContext.createBufferSource();
+        crackleSource.buffer = noiseBuffer;
+        crackleSource.playbackRate.setValueAtTime(1.9, now);
+        crackleSource.connect(crackleGain);
+        crackleGain.connect(audioContext.destination);
+
+        noiseSource.start(now);
+        noiseSource.stop(now + duration);
+        foldOscillator.start(now);
+        foldOscillator.stop(now + 0.26);
+        crackleSource.start(now + 0.015);
+        crackleSource.stop(now + 0.22);
+      }
+
+      envelopeImage.addEventListener("click", () => {
+        playPaperOpenSfx();
+        overlay.classList.add("is-letter-open");
+      });
+
+      function closeLetter() {
+        overlay.classList.remove("is-letter-open");
+        overlay.classList.remove("is-open");
+        document.body.classList.remove("modal-open");
+        setTimeout(() => {
+          overlay.hidden = true;
+        }, 450);
+      }
+
+      archiveConfig.letters.forEach((letter, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "letter-icon";
+        button.style.setProperty("--rotation", `${index % 2 === 0 ? -3 : 2}deg`);
+        button.innerHTML = `
+          <span class="letter-icon__art">
+            <img
+              src="https://blogger.googleusercontent.com/img/a/AVvXsEi6j4wGEGYQw4_YrJy9FgnZwWVu75VN2IXTS097d-wtAm8RuSWwIrXie-f-Lgr8LNAxU3X0VhWTypGjuPgDE1QYnMW1f1gFbW8WY7QJJomeCkBjMYR2EjimqwwJKhqeSNi1WEFgBGUAIytbYnL44teLfhJ6ehEGnCPRakLYQcRiGgDMxRA1KA4W3qiFxcs"
+              alt="${letter.title}"
+            >
+          </span>
+        `;
+        button.addEventListener("click", () => openLetter(letter));
+        grid.appendChild(button);
+      });
+
+      overlay.addEventListener("click", (event) => {
+        if (event.target === overlay) {
+          closeLetter();
+        }
+      });
+
+      closeButton.addEventListener("click", closeLetter);
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && overlay.classList.contains("is-open")) {
+          closeLetter();
+        }
+      });
+
+      window.addEventListener("load", () => {
+        document.body.classList.add("is-ready");
+      });
+    </script>
+  </body>
+</html>
