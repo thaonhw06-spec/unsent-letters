@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cassie Loveletters | Unsent Letters</title>
+    <title>Cassie Loveletters | To Your Clementine</title>
     <meta
       name="description"
       content="A quiet archive of letters that could never be sent."
@@ -60,6 +60,61 @@
         padding: 34px 18px 44px;
       }
 
+      .utility-bar {
+        position: absolute;
+        inset: 24px 20px auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        pointer-events: none;
+        z-index: 10;
+      }
+
+      .utility-button {
+        width: 48px;
+        height: 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 248, 238, 0.2);
+        background: rgba(255, 248, 238, 0.08);
+        color: rgba(255, 248, 238, 0.96);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 248, 238, 0.12),
+          0 10px 24px rgba(8, 8, 12, 0.2);
+        backdrop-filter: blur(7px);
+        -webkit-backdrop-filter: blur(7px);
+        text-decoration: none;
+        cursor: pointer;
+        pointer-events: auto;
+        transition: transform 0.22s ease, filter 0.22s ease, box-shadow 0.22s ease,
+          background 0.22s ease;
+      }
+
+      .utility-button:hover,
+      .utility-button:focus-visible {
+        transform: scale(0.9);
+        filter: brightness(1.05);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 248, 238, 0.16),
+          0 12px 28px rgba(8, 8, 12, 0.24);
+      }
+
+      .utility-button svg {
+        width: 22px;
+        height: 22px;
+        fill: currentColor;
+      }
+
+      .utility-button.is-playing {
+        background: rgba(255, 248, 238, 0.16);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 248, 238, 0.18),
+          0 12px 28px rgba(8, 8, 12, 0.28),
+          0 0 18px rgba(255, 248, 238, 0.18);
+      }
+
       .archive-head {
         text-align: center;
         margin-bottom: 28px;
@@ -79,14 +134,17 @@
         font-size: clamp(2.8rem, 7vw, 5rem);
         font-weight: 500;
         color: #f7efe8;
-        text-shadow: 0 4px 18px rgba(11, 9, 14, 0.22);
+        font-style: italic;
+        text-shadow:
+          0 5px 18px rgba(11, 9, 14, 0.28),
+          0 0 14px rgba(247, 239, 232, 0.22);
       }
 
       .archive-head__copy {
         width: min(100%, 560px);
         margin: 10px auto 0;
         line-height: 1.75;
-        font-size: 1.05rem;
+        font-size: 0.95rem;
         color: rgba(248, 241, 235, 0.82);
         text-shadow: 0 2px 12px rgba(11, 9, 14, 0.18);
       }
@@ -101,7 +159,7 @@
 
       .letters-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(130px, 130px));
+        grid-template-columns: repeat(6, 130px);
         justify-content: center;
         gap: 24px 28px;
       }
@@ -317,9 +375,24 @@
         font-size: 1.45rem;
       }
 
-      @media (max-width: 720px) {
+      @media (max-width: 980px) {
         .letters-grid {
-          grid-template-columns: repeat(auto-fit, minmax(112px, 112px));
+          grid-template-columns: repeat(4, 130px);
+        }
+      }
+
+      @media (max-width: 720px) {
+        .utility-bar {
+          inset: 18px 14px auto;
+        }
+
+        .utility-button {
+          width: 44px;
+          height: 44px;
+        }
+
+        .letters-grid {
+          grid-template-columns: repeat(3, 112px);
           gap: 20px 18px;
         }
 
@@ -341,16 +414,50 @@
           text-align: center;
         }
       }
+
+      @media (max-width: 560px) {
+        .letters-grid {
+          grid-template-columns: repeat(2, 112px);
+        }
+      }
     </style>
   </head>
   <body>
     <div class="page-shell">
+      <div class="utility-bar" aria-label="Site controls">
+        <a
+          class="utility-button"
+          href="https://cassie-loveletters.blogspot.com/"
+          aria-label="Back to the main blog"
+          title="Back to the main blog"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M12 3.4 3.8 10v10.2c0 .5.4.8.8.8h5.2v-6.5c0-.5.4-.8.8-.8h2.8c.5 0 .8.4.8.8V21h5.2c.5 0 .8-.4.8-.8V10L12 3.4Z"
+            />
+          </svg>
+        </a>
+
+        <button
+          class="utility-button"
+          type="button"
+          data-music-toggle
+          aria-label="Play background music"
+          title="Play background music"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M15.6 3.5a.8.8 0 0 1 .9.79v10.15a3.65 3.65 0 1 1-1.6-3.03V8.5l-5.6 1.24v7.7a3.65 3.65 0 1 1-1.6-3.03V5.96a.8.8 0 0 1 .63-.78l7.1-1.58h.17Z"
+            />
+          </svg>
+        </button>
+      </div>
+
       <header class="archive-head">
         <p class="archive-head__eyebrow">cassie loveletters</p>
-        <h1>unsent letters</h1>
+        <h1>To Your Clementine</h1>
         <p class="archive-head__copy">
-          Open a letter gently. Some things were only ever meant to be read in
-          private.
+          ký ức cũng giống với rựu ngon, theo thời gian chúng sẽ càng trở nên đẹp
         </p>
       </header>
 
@@ -479,15 +586,19 @@
 
       const grid = document.querySelector(".letters-grid");
       const overlay = document.querySelector(".overlay");
-      const modal = document.querySelector(".letter-modal");
       const closeButton = document.querySelector(".letter-modal__close");
       const envelopeImage = document.querySelector("[data-envelope-image]");
+      const musicToggle = document.querySelector("[data-music-toggle]");
       let audioContext;
       const paperTurnAudio = new Audio(
         "https://www.orangefreesounds.com/wp-content/uploads/2018/07/Page-turn-sound-effect.mp3"
       );
       paperTurnAudio.preload = "auto";
       paperTurnAudio.volume = 0.75;
+      const backgroundAudio = new Audio("./assets/atmospheric-keys-melody-butterflies_70bpm_D_minor.wav");
+      backgroundAudio.preload = "auto";
+      backgroundAudio.loop = true;
+      backgroundAudio.volume = 0.4;
 
       const fields = {
         title: document.querySelector("[data-title]"),
@@ -529,6 +640,66 @@
         }
 
         playSynthPaperOpenSfx();
+      }
+
+      function syncMusicButtonState() {
+        const isPlaying = !backgroundAudio.paused;
+        musicToggle.classList.toggle("is-playing", isPlaying);
+        musicToggle.setAttribute(
+          "aria-label",
+          isPlaying ? "Pause background music" : "Play background music"
+        );
+        musicToggle.setAttribute(
+          "title",
+          isPlaying ? "Pause background music" : "Play background music"
+        );
+      }
+
+      function fadeAudio(audio, targetVolume, duration) {
+        const startVolume = audio.volume;
+        const startTime = performance.now();
+
+        function tick(now) {
+          const progress = Math.min((now - startTime) / duration, 1);
+          audio.volume = startVolume + (targetVolume - startVolume) * progress;
+
+          if (progress < 1) {
+            requestAnimationFrame(tick);
+            return;
+          }
+
+          if (targetVolume === 0) {
+            audio.pause();
+            audio.volume = 0.4;
+          }
+
+          syncMusicButtonState();
+        }
+
+        requestAnimationFrame(tick);
+      }
+
+      function toggleBackgroundMusic() {
+        if (backgroundAudio.paused) {
+          backgroundAudio.volume = 0;
+          const playAttempt = backgroundAudio.play();
+
+          if (playAttempt && typeof playAttempt.then === "function") {
+            playAttempt
+              .then(() => {
+                fadeAudio(backgroundAudio, 0.4, 900);
+              })
+              .catch(() => {
+                syncMusicButtonState();
+              });
+            return;
+          }
+
+          fadeAudio(backgroundAudio, 0.4, 900);
+          return;
+        }
+
+        fadeAudio(backgroundAudio, 0, 700);
       }
 
       function playSynthPaperOpenSfx() {
@@ -659,6 +830,8 @@
       });
 
       closeButton.addEventListener("click", closeLetter);
+      musicToggle.addEventListener("click", toggleBackgroundMusic);
+      syncMusicButtonState();
 
       document.addEventListener("keydown", (event) => {
         if (event.key === "Escape" && overlay.classList.contains("is-open")) {
