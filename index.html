@@ -24,7 +24,7 @@
         --rose: #ab7f87;
         --line: rgba(129, 108, 92, 0.14);
         --shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-        --stamp-image: url("https://blogger.googleusercontent.com/img/a/AVvXsEgoWrPqfDRdUWIyvE4tmQWJEf-De6F4FUollW_qjkYDGdSGzwrvXG1nrFlqr0_Prien-mNldLhLYro0ZKcFJ2z4l4Om3KPTh-KCRSjAIY6_JJ9oB23sDQB2eJLACke3UKAOBao-caEMBkWgWLWrqnI_tN_pmPTwlm5zo9dAD9uLr4o3l93akFCuSibzlD8");
+        --stamp-image: url("./assets/stamp-cat.png");
       }
 
       * {
@@ -677,47 +677,42 @@
         pointer-events: none;
       }
 
-      .drawer-read-sheet .letter-modal__signoff::before {
-        content: "";
-        position: absolute;
-        left: -2px;
-        bottom: 2px;
-        width: 56px;
-        aspect-ratio: 1;
-        background: var(--stamp-image) center / cover no-repeat;
-        border-radius: 4px;
-        box-shadow:
-          0 5px 12px rgba(56, 31, 20, 0.16),
-          1px 1px 0 rgba(128, 92, 74, 0.12),
-          inset 0 0 0 1px rgba(255, 255, 255, 0.18);
-        transform: rotate(-10deg);
-        opacity: 0.94;
+      .drawer-read-sheet .letter-modal__signoff {
+        position: relative;
+        padding-left: 0;
+        min-height: 0;
+      }
+
+      .drawer-read-sheet__stamp {
+        width: 180px;
+        height: auto;
+        display: block;
+        transform: rotate(-8deg);
+        filter: drop-shadow(0 10px 20px rgba(56, 31, 20, 0.14));
         pointer-events: none;
+        z-index: 2;
+      }
+
+      .drawer-read-sheet__footer {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 28px;
+        margin-top: 42px;
       }
 
       .drawer-read-sheet .letter-modal__signoff {
         position: relative;
-        padding-left: 80px;
-        min-height: 64px;
-      }
-
-      .drawer-read-sheet__stamp {
-        position: absolute;
-        top: 18px;
-        right: 22px;
-        width: 82px;
-        height: auto;
-        opacity: 0.92;
-        filter: drop-shadow(0 6px 10px rgba(70, 52, 39, 0.1));
-        transform: rotate(6deg);
-        z-index: 2;
-        pointer-events: none;
+        z-index: 3;
+        margin-top: 0;
+        margin-left: auto;
+        max-width: 260px;
       }
 
       .drawer-read-close {
         position: absolute;
         top: 16px;
-        right: 118px;
+        right: 16px;
         z-index: 7;
         border: 0;
         background: transparent;
@@ -1021,13 +1016,16 @@
         }
 
         .drawer-read-sheet__stamp {
-          width: 66px;
-          top: 16px;
-          right: 16px;
+          width: 128px;
         }
 
-        .drawer-read-close {
-          right: 82px;
+        .drawer-read-sheet__footer {
+          gap: 16px;
+          margin-top: 28px;
+        }
+
+        .drawer-read-sheet .letter-modal__signoff {
+          max-width: 170px;
         }
 
         .dream-grid,
@@ -1173,20 +1171,22 @@
         </section>
         <article class="drawer-read-sheet" aria-live="polite">
           <button class="drawer-read-close" type="button" aria-label="Back to the suitcase" data-drawer-read-close>×</button>
-          <img
-            class="drawer-read-sheet__stamp"
-            src="https://blogger.googleusercontent.com/img/a/AVvXsEgDshlic_qWhbWS6Pkfpe11VZUi04_NvZmLmo9beM1zahIp5xehVg-_kO2bwiuIGTIJB8c0eqxpmHzXFu4J4NpNDLkSptvgct0owx6nFzOIxpl_NJLxnKwqqivYxnXv8sccx8IlXNsOpr25-SaNwqL_fwPDZ8dogUkp_muX6nvir5nlk-DH-OtJODqHQbs"
-            alt=""
-          />
           <div class="letter-modal__meta">
             <div data-drawer-from></div>
             <div data-drawer-date></div>
           </div>
           <h2 class="letter-modal__to" data-drawer-to></h2>
           <div class="letter-modal__body" data-drawer-body></div>
-          <div class="letter-modal__signoff">
-            <div data-drawer-signoff></div>
-            <span class="letter-modal__signature" data-drawer-signature></span>
+          <div class="drawer-read-sheet__footer">
+            <img
+              class="drawer-read-sheet__stamp"
+              src="./assets/stamp-cat.png"
+              alt=""
+            />
+            <div class="letter-modal__signoff">
+              <div data-drawer-signoff></div>
+              <span class="letter-modal__signature" data-drawer-signature></span>
+            </div>
           </div>
         </article>
       </article>
