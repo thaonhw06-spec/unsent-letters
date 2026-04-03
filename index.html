@@ -591,22 +591,6 @@
         margin: 0 auto 8px;
         transform: rotate(var(--rotation, -2deg));
       }
-      
-      .drawer-letter__icon::after {
-        content: "";
-        position: absolute;
-        top: 3px;
-        right: 4px;
-        width: 15px;
-        aspect-ratio: 1;
-        background: var(--stamp-image) center / cover no-repeat;
-        border-radius: 2px;
-        box-shadow:
-          0 2px 5px rgba(56, 31, 20, 0.22),
-          inset 0 0 0 1px rgba(255, 255, 255, 0.18);
-        transform: rotate(10deg);
-        pointer-events: none;
-      }
 
       .drawer-letter__icon img {
         display: block;
@@ -693,10 +677,47 @@
         pointer-events: none;
       }
 
+      .drawer-read-sheet .letter-modal__signoff::before {
+        content: "";
+        position: absolute;
+        left: -2px;
+        bottom: 2px;
+        width: 56px;
+        aspect-ratio: 1;
+        background: var(--stamp-image) center / cover no-repeat;
+        border-radius: 4px;
+        box-shadow:
+          0 5px 12px rgba(56, 31, 20, 0.16),
+          1px 1px 0 rgba(128, 92, 74, 0.12),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+        transform: rotate(-10deg);
+        opacity: 0.94;
+        pointer-events: none;
+      }
+
+      .drawer-read-sheet .letter-modal__signoff {
+        position: relative;
+        padding-left: 80px;
+        min-height: 64px;
+      }
+
+      .drawer-read-sheet__stamp {
+        position: absolute;
+        top: 18px;
+        right: 22px;
+        width: 82px;
+        height: auto;
+        opacity: 0.92;
+        filter: drop-shadow(0 6px 10px rgba(70, 52, 39, 0.1));
+        transform: rotate(6deg);
+        z-index: 2;
+        pointer-events: none;
+      }
+
       .drawer-read-close {
         position: absolute;
         top: 16px;
-        right: 16px;
+        right: 118px;
         z-index: 7;
         border: 0;
         background: transparent;
@@ -999,6 +1020,16 @@
           padding: 28px 20px 24px;
         }
 
+        .drawer-read-sheet__stamp {
+          width: 66px;
+          top: 16px;
+          right: 16px;
+        }
+
+        .drawer-read-close {
+          right: 82px;
+        }
+
         .dream-grid,
         .letter-form__row {
           grid-template-columns: 1fr;
@@ -1086,7 +1117,7 @@
         <p class="archive-head__eyebrow">cassie loveletters</p>
         <h1>To Your Clementine</h1>
         <p class="archive-head__copy">
-          ký ức cũng giống với rượu ngon, theo thời gian chúng sẽ càng trở nên đẹp
+          ký ức cũng giống với rựu ngon, theo thời gian chúng sẽ càng trở nên đẹp
         </p>
       </header>
 
@@ -1142,6 +1173,11 @@
         </section>
         <article class="drawer-read-sheet" aria-live="polite">
           <button class="drawer-read-close" type="button" aria-label="Back to the suitcase" data-drawer-read-close>×</button>
+          <img
+            class="drawer-read-sheet__stamp"
+            src="https://blogger.googleusercontent.com/img/a/AVvXsEgDshlic_qWhbWS6Pkfpe11VZUi04_NvZmLmo9beM1zahIp5xehVg-_kO2bwiuIGTIJB8c0eqxpmHzXFu4J4NpNDLkSptvgct0owx6nFzOIxpl_NJLxnKwqqivYxnXv8sccx8IlXNsOpr25-SaNwqL_fwPDZ8dogUkp_muX6nvir5nlk-DH-OtJODqHQbs"
+            alt=""
+          />
           <div class="letter-modal__meta">
             <div data-drawer-from></div>
             <div data-drawer-date></div>
