@@ -31,6 +31,18 @@
         box-sizing: border-box;
       }
 
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
       html,
       body {
         min-height: 100%;
@@ -68,6 +80,13 @@
         align-items: center;
         pointer-events: none;
         z-index: 10;
+      }
+
+      .utility-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        pointer-events: auto;
       }
 
       .utility-button {
@@ -113,6 +132,14 @@
           inset 0 1px 0 rgba(255, 248, 238, 0.18),
           0 12px 28px rgba(8, 8, 12, 0.28),
           0 0 18px rgba(255, 248, 238, 0.18);
+      }
+
+      .utility-button.is-open {
+        background: rgba(255, 248, 238, 0.18);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 248, 238, 0.18),
+          0 12px 28px rgba(8, 8, 12, 0.28),
+          0 0 20px rgba(248, 241, 235, 0.24);
       }
 
       .archive-head {
@@ -375,10 +402,491 @@
         font-size: 1.45rem;
       }
 
+      .dream-overlay {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        padding: 28px 18px;
+        background:
+          radial-gradient(circle at top, rgba(255, 247, 234, 0.08), transparent 34%),
+          rgba(10, 9, 16, 0.64);
+        backdrop-filter: blur(7px);
+        -webkit-backdrop-filter: blur(7px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s ease;
+        z-index: 60;
+      }
+
+      .dream-overlay.is-open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .dream-modal {
+        position: relative;
+        width: min(100%, 980px);
+        min-height: min(84vh, 760px);
+        opacity: 0;
+        transform: translateY(20px) scale(0.96);
+        transition: opacity 0.45s ease, transform 0.45s ease;
+      }
+
+      .dream-overlay.is-open .dream-modal {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+
+      .dream-close {
+        position: absolute;
+        top: 4px;
+        right: 8px;
+        border: 0;
+        background: transparent;
+        color: rgba(255, 243, 230, 0.72);
+        font-size: 1.9rem;
+        cursor: pointer;
+        z-index: 7;
+      }
+
+      .dream-scene {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: min(100%, 690px);
+        padding: 0;
+        border: 0;
+        background: transparent;
+        transform: translate(-50%, -50%);
+        transition: transform 0.3s ease, opacity 0.35s ease, filter 0.3s ease;
+        cursor: pointer;
+        z-index: 3;
+      }
+
+      .dream-scene:hover,
+      .dream-scene:focus-visible {
+        transform: translate(-50%, -50%) scale(1.02);
+        filter: brightness(1.04);
+      }
+
+      .dream-overlay.is-panel-open .dream-scene {
+        opacity: 0.14;
+        pointer-events: none;
+        transform: translate(-50%, -52%) scale(0.94);
+      }
+
+      .dream-scene img {
+        display: block;
+        width: 100%;
+        height: auto;
+        filter: drop-shadow(0 22px 36px rgba(6, 6, 10, 0.38));
+      }
+
+      .dream-scene--write {
+        width: min(290px, calc(100vw - 52px));
+      }
+
+      .dream-scene--drawer {
+        width: min(265px, calc(100vw - 52px));
+      }
+
+      .dream-hint {
+        position: absolute;
+        left: 50%;
+        top: calc(50% + 214px);
+        width: min(380px, calc(100vw - 56px));
+        margin: 0;
+        transform: translateX(-50%);
+        text-align: center;
+        color: rgba(245, 236, 226, 0.86);
+        font-size: 0.98rem;
+        line-height: 1.65;
+        text-shadow:
+          0 3px 14px rgba(8, 8, 12, 0.26),
+          0 0 12px rgba(245, 236, 226, 0.14);
+        transition: opacity 0.28s ease, transform 0.28s ease;
+        z-index: 4;
+      }
+
+      .dream-hint--write {
+        width: min(520px, calc(100vw - 42px));
+        white-space: nowrap;
+      }
+
+      .dream-hint--drawer {
+        width: min(760px, calc(100vw - 44px));
+      }
+
+      .dream-overlay.is-panel-open .dream-hint {
+        opacity: 0;
+        transform: translateX(-50%) translateY(10px);
+        pointer-events: none;
+      }
+
+      .drawer-interior {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: min(500px, calc(100vw - 42px));
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-50%, -50%) translateY(46px) scale(0.94);
+        transition: opacity 0.45s ease, transform 0.45s ease;
+        z-index: 5;
+      }
+
+      .dream-overlay.is-panel-open .drawer-interior {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translate(-50%, -50%) translateY(0) scale(1);
+      }
+
+      .dream-overlay.is-reading-letter .drawer-interior {
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-50%, -54%) scale(0.95);
+      }
+
+      .drawer-interior__image {
+        display: block;
+        width: 100%;
+        height: auto;
+        filter: drop-shadow(0 26px 36px rgba(0, 0, 0, 0.24));
+      }
+
+      .drawer-letters {
+        position: absolute;
+        left: 50%;
+        right: auto;
+        top: 62%;
+        width: 268px;
+        height: 142px;
+        transform: translate(-50%, -50%);
+      }
+
+      .drawer-letter {
+        appearance: none;
+        border: 0;
+        background: transparent;
+        padding: 0;
+        cursor: pointer;
+        color: #f6ede7;
+        font: inherit;
+        text-align: center;
+        transition: transform 0.22s ease, filter 0.22s ease;
+        position: absolute;
+      }
+
+      .drawer-letter:hover,
+      .drawer-letter:focus-visible {
+        transform: translateY(-3px) scale(1.02);
+        filter: brightness(1.04);
+      }
+
+      .drawer-letter__icon {
+        display: block;
+        width: 58px;
+        margin: 0 auto 8px;
+        transform: rotate(var(--rotation, -2deg));
+      }
+
+      .drawer-letter__icon img {
+        display: block;
+        width: 100%;
+        height: auto;
+        filter: drop-shadow(0 10px 18px rgba(40, 24, 17, 0.18));
+      }
+
+      .drawer-letter__title {
+        display: block;
+        max-width: 64px;
+        margin: 0 auto;
+        font-size: 0.58rem;
+        line-height: 1.28;
+        color: rgba(255, 245, 232, 0.92);
+        text-shadow: 0 1px 8px rgba(55, 31, 18, 0.28);
+      }
+
+      .drawer-letter:nth-child(1) {
+        left: 50%;
+        top: 6px;
+        transform: translateX(-50%) rotate(-3deg);
+      }
+
+      .drawer-letter:nth-child(2) {
+        left: -2px;
+        bottom: 0;
+        transform: rotate(-8deg);
+      }
+
+      .drawer-letter:nth-child(3) {
+        right: -2px;
+        bottom: 0;
+        transform: rotate(7deg);
+      }
+
+      .drawer-read-sheet {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: min(100%, 620px);
+        max-height: min(72vh, 640px);
+        overflow: auto;
+        padding: 34px 36px 30px;
+        border-radius: 6px;
+        background:
+          linear-gradient(180deg, rgba(255, 252, 247, 0.94), rgba(244, 239, 230, 0.96)),
+          linear-gradient(180deg, var(--paper), var(--paper-deep));
+        border: 1px solid rgba(129, 108, 92, 0.16);
+        box-shadow: var(--shadow);
+        color: var(--ink);
+        transform: translate(-50%, -50%) translateY(68px) scale(0.94) rotate(-1deg);
+        opacity: 0;
+        pointer-events: none;
+        transition: transform 0.58s ease, opacity 0.58s ease;
+        z-index: 6;
+      }
+
+      .dream-overlay.is-reading-letter .drawer-read-sheet {
+        transform: translate(-50%, -50%) translateY(0) scale(1) rotate(-1deg);
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .drawer-read-sheet::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+          linear-gradient(transparent, rgba(124, 106, 91, 0.03)),
+          radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.35), transparent 32%);
+        mix-blend-mode: multiply;
+      }
+
+      .drawer-read-sheet::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 50%;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(121, 101, 84, 0.18), transparent);
+        pointer-events: none;
+      }
+
+      .drawer-read-close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        z-index: 7;
+        border: 0;
+        background: transparent;
+        color: rgba(80, 71, 64, 0.66);
+        font-size: 1.7rem;
+        cursor: pointer;
+      }
+
+      .dream-panel {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: min(100%, 680px);
+        max-height: min(76vh, 680px);
+        overflow: auto;
+        padding: 30px 32px;
+        border-radius: 8px;
+        color: var(--ink);
+        background:
+          linear-gradient(180deg, rgba(255, 252, 247, 0.94), rgba(244, 239, 230, 0.96)),
+          linear-gradient(180deg, var(--paper), var(--paper-deep));
+        border: 1px solid rgba(129, 108, 92, 0.16);
+        box-shadow:
+          0 24px 46px rgba(0, 0, 0, 0.2);
+        transform: translate(-50%, -50%) translateY(74px) scale(0.94);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.5s ease, transform 0.5s ease;
+        z-index: 5;
+      }
+
+      .dream-overlay.is-panel-open .dream-panel {
+        transform: translate(-50%, -50%) translateY(0) scale(1);
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .dream-panel::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        background:
+          linear-gradient(transparent, rgba(124, 106, 91, 0.03)),
+          radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.34), transparent 32%);
+        mix-blend-mode: multiply;
+      }
+
+      .dream-panel::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 50%;
+        height: 1px;
+        pointer-events: none;
+        background: linear-gradient(90deg, transparent, rgba(121, 101, 84, 0.14), transparent);
+      }
+
+      .dream-panel__heading {
+        position: relative;
+        margin: 0 0 14px;
+        font-size: 1.5rem;
+        font-weight: 500;
+        color: var(--ink);
+      }
+
+      .dream-panel__copy {
+        position: relative;
+        margin: 0 0 20px;
+        font-size: 0.98rem;
+        line-height: 1.7;
+        color: var(--ink-soft);
+      }
+
+      .dream-grid {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .dream-card {
+        padding: 18px 18px 16px;
+        border-radius: 4px;
+        background: rgba(255, 252, 247, 0.58);
+        border: 1px solid rgba(129, 108, 92, 0.1);
+      }
+
+      .dream-card__meta {
+        margin: 0 0 10px;
+        font-size: 0.76rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(108, 101, 94, 0.72);
+      }
+
+      .dream-card__body {
+        margin: 0;
+        font-size: 1rem;
+        line-height: 1.72;
+        color: var(--ink);
+      }
+
+      .dream-card__body--muted {
+        color: var(--ink-soft);
+      }
+
+      .letter-form {
+        position: relative;
+        display: grid;
+        gap: 12px;
+      }
+
+      .letter-form__row {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .letter-form label {
+        display: grid;
+        gap: 7px;
+        font-size: 0.88rem;
+        color: var(--ink-soft);
+        letter-spacing: 0.03em;
+        text-transform: none;
+      }
+
+      .letter-form input,
+      .letter-form textarea {
+        width: 100%;
+        padding: 12px 13px;
+        border-radius: 4px;
+        border: 1px solid rgba(129, 108, 92, 0.14);
+        background: rgba(255, 252, 247, 0.52);
+        color: var(--ink);
+        font: inherit;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+      }
+
+      .letter-form textarea {
+        min-height: 250px;
+        resize: vertical;
+        line-height: 1.72;
+      }
+
+      .letter-form input::placeholder,
+      .letter-form textarea::placeholder {
+        color: rgba(108, 101, 94, 0.44);
+      }
+
+      .letter-form__footer {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 14px;
+        margin-top: 4px;
+      }
+
+      .letter-form__footer label {
+        flex: 1 1 auto;
+        max-width: 320px;
+      }
+
+      .letter-form__send {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        padding: 10px 16px;
+        border-radius: 999px;
+        border: 1px solid rgba(129, 108, 92, 0.16);
+        background: rgba(255, 252, 247, 0.72);
+        color: var(--ink);
+        cursor: pointer;
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.22),
+          0 10px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .letter-form__send svg {
+        width: 16px;
+        height: 16px;
+        fill: currentColor;
+      }
+
+      .letter-form__confirmation {
+        margin-top: 4px;
+        font-size: 0.98rem;
+        line-height: 1.6;
+        color: var(--ink-soft);
+      }
+
       @media (max-width: 980px) {
         .letters-grid {
           grid-template-columns: repeat(4, 130px);
         }
+
+        .dream-panel {
+          width: min(100%, 88vw);
+        }
+
+        .drawer-interior {
+          width: min(500px, calc(100vw - 42px));
+        }
+
       }
 
       @media (max-width: 720px) {
@@ -389,6 +897,10 @@
         .utility-button {
           width: 44px;
           height: 44px;
+        }
+
+        .utility-actions {
+          gap: 8px;
         }
 
         .letters-grid {
@@ -412,6 +924,76 @@
 
         .letter-modal__signoff {
           text-align: center;
+        }
+
+        .dream-scene {
+          width: min(100%, 92vw);
+        }
+
+        .dream-scene--write {
+          width: min(230px, calc(100vw - 44px));
+        }
+
+        .dream-scene--drawer {
+          width: min(215px, calc(100vw - 44px));
+        }
+
+        .dream-hint {
+          top: calc(50% + 138px);
+          width: min(320px, calc(100vw - 42px));
+          font-size: 0.92rem;
+        }
+
+        .dream-panel {
+          width: min(100%, 92vw);
+          padding: 22px 20px;
+        }
+
+        .drawer-interior {
+          width: min(270px, calc(100vw - 30px));
+        }
+
+        .drawer-letters {
+          width: 214px;
+          height: 124px;
+          top: 63%;
+        }
+
+        .drawer-letter__icon {
+          width: 50px;
+        }
+
+        .drawer-letter__title {
+          max-width: 56px;
+          font-size: 0.5rem;
+          line-height: 1.24;
+        }
+
+        .drawer-letter:nth-child(2) {
+          left: -2px;
+        }
+
+        .drawer-letter:nth-child(3) {
+          right: -2px;
+        }
+
+        .drawer-read-sheet {
+          width: min(100%, 92vw);
+          padding: 28px 20px 24px;
+        }
+
+        .dream-grid,
+        .letter-form__row {
+          grid-template-columns: 1fr;
+        }
+
+        .letter-form__footer {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .letter-form__footer label {
+          max-width: none;
         }
       }
 
@@ -438,26 +1020,56 @@
           </svg>
         </a>
 
-        <button
-          class="utility-button"
-          type="button"
-          data-music-toggle
-          aria-label="Play background music"
-          title="Play background music"
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              d="M15.6 3.5a.8.8 0 0 1 .9.79v10.15a3.65 3.65 0 1 1-1.6-3.03V8.5l-5.6 1.24v7.7a3.65 3.65 0 1 1-1.6-3.03V5.96a.8.8 0 0 1 .63-.78l7.1-1.58h.17Z"
-            />
-          </svg>
-        </button>
+        <div class="utility-actions">
+          <button
+            class="utility-button"
+            type="button"
+            data-drawer-toggle
+            aria-label="Open the shared drawer"
+            title="Open the shared drawer"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M4.5 5.4h15a1.1 1.1 0 0 1 1.1 1.1v10.9a1.1 1.1 0 0 1-1.1 1.1h-15a1.1 1.1 0 0 1-1.1-1.1V6.5a1.1 1.1 0 0 1 1.1-1.1Zm.5 2.2v3.2h14V7.6H5Zm0 5.2v3.4h14v-3.4H5Zm6 1.2a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2Z"
+              />
+            </svg>
+          </button>
+
+          <button
+            class="utility-button"
+            type="button"
+            data-write-toggle
+            aria-label="Write a letter"
+            title="Write a letter"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M19.2 3.5c.7 0 1.2.5 1.2 1.2 0 .3-.1.6-.3.8l-2.3 2.7-2.1-1.8 2.3-2.6c.3-.2.7-.3 1.2-.3ZM14.8 7.4l2.1 1.8-7.6 8.8-3.3.9.9-3.3 7.9-8.2Zm-9 10.4c0 .6.5 1 1 1h10.4a.8.8 0 1 1 0 1.6H6.8a2.6 2.6 0 0 1-2.6-2.6V7.4a.8.8 0 1 1 1.6 0v10.4Z"
+              />
+            </svg>
+          </button>
+
+          <button
+            class="utility-button"
+            type="button"
+            data-music-toggle
+            aria-label="Play background music"
+            title="Play background music"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M15.6 3.5a.8.8 0 0 1 .9.79v10.15a3.65 3.65 0 1 1-1.6-3.03V8.5l-5.6 1.24v7.7a3.65 3.65 0 1 1-1.6-3.03V5.96a.8.8 0 0 1 .63-.78l7.1-1.58h.17Z"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
 
       <header class="archive-head">
         <p class="archive-head__eyebrow">cassie loveletters</p>
         <h1>To Your Clementine</h1>
         <p class="archive-head__copy">
-          ký ức cũng giống với rượu ngon, theo thời gian chúng sẽ càng trở nên đẹp
+          ký ức cũng giống với rựu ngon, theo thời gian chúng sẽ càng trở nên đẹp
         </p>
       </header>
 
@@ -491,6 +1103,90 @@
       </article>
     </div>
 
+    <div class="dream-overlay" data-drawer-overlay hidden>
+      <article class="dream-modal" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+        <button class="dream-close" type="button" aria-label="Close shared drawer" data-drawer-close>×</button>
+        <button class="dream-scene dream-scene--drawer" type="button" data-drawer-scene aria-label="Open the shared drawer">
+          <img
+            src="https://blogger.googleusercontent.com/img/a/AVvXsEgCk6RQCeLzSDlEuUHjF43W2Zg6Q-ffMN6Nxx4nK8cxSXoIJ06Bf0elRv9Ii1ZCv-D3zM7oeh4PbXkjUIorX4Rk7cwLrdG1DCs2zFUiqKzn3OvyCe_DOEOr5XAW9Cp3PEFZMgoiwiAZ3IP00gYA3I5UVR_wTZ7h5WAkwkPoBGPLDJ-wlFkmTPROxC8o2d0"
+            alt="A shared drawer waiting to be opened"
+          />
+        </button>
+        <p class="dream-hint dream-hint--drawer" data-drawer-hint>vì cảm xúc của các cậu là hành trang, mình sẽ đi đến El Fin del Mundo<br />và để những nỗi buồn ấy ở lại</p>
+
+        <section class="drawer-interior" aria-live="polite">
+          <h2 class="sr-only" id="drawer-title">The Shared Drawer</h2>
+          <img
+            class="drawer-interior__image"
+            src="./assets/drawer-inside.png"
+            alt="Inside the shared drawer suitcase"
+          />
+          <div class="drawer-letters" data-drawer-letters></div>
+        </section>
+        <article class="drawer-read-sheet" aria-live="polite">
+          <button class="drawer-read-close" type="button" aria-label="Back to the suitcase" data-drawer-read-close>×</button>
+          <div class="letter-modal__meta">
+            <div data-drawer-from></div>
+            <div data-drawer-date></div>
+          </div>
+          <h2 class="letter-modal__to" data-drawer-to></h2>
+          <div class="letter-modal__body" data-drawer-body></div>
+          <div class="letter-modal__signoff">
+            <div data-drawer-signoff></div>
+            <span class="letter-modal__signature" data-drawer-signature></span>
+          </div>
+        </article>
+      </article>
+    </div>
+
+    <div class="dream-overlay" data-write-overlay hidden>
+      <article class="dream-modal" role="dialog" aria-modal="true" aria-labelledby="write-title">
+        <button class="dream-close" type="button" aria-label="Close writing desk" data-write-close>×</button>
+        <button class="dream-scene dream-scene--write" type="button" data-write-scene aria-label="Open the writing desk">
+          <img
+            src="https://blogger.googleusercontent.com/img/a/AVvXsEgDshlic_qWhbWS6Pkfpe11VZUi04_NvZmLmo9beM1zahIp5xehVg-_kO2bwiuIGTIJB8c0eqxpmHzXFu4J4NpNDLkSptvgct0owx6nFzOIxpl_NJLxnKwqqivYxnXv8sccx8IlXNsOpr25-SaNwqL_fwPDZ8dogUkp_muX6nvir5nlk-DH-OtJODqHQbs"
+            alt="A vintage writing desk waiting to be opened"
+          />
+        </button>
+        <p class="dream-hint dream-hint--write" data-write-hint>sử dụng con tem này, viết xuống những điều cậu đã không thể gửi</p>
+
+        <section class="dream-panel">
+          <form class="letter-form" data-letter-form>
+            <label>
+              title
+              <input type="text" name="title" placeholder="something you never said out loud" />
+            </label>
+
+            <label>
+              letter
+              <textarea
+                name="letter"
+                placeholder="write here... some things only need somewhere gentle to stay."
+              ></textarea>
+            </label>
+
+            <div class="letter-form__footer">
+              <label>
+                signed as
+                <input type="text" name="from" placeholder="your name, or the name you wish for" />
+              </label>
+
+              <button class="letter-form__send" type="submit">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3.5 11.2 19.9 4a.8.8 0 0 1 1.1 1l-4.5 14.7a.8.8 0 0 1-1.5.1l-2.7-5.5-5.4-2.6a.8.8 0 0 1 0-1.5Zm4.9-.3 4.7 2.2 2.6 5.1 3.3-10.8-10.6 3.5Z" />
+                </svg>
+                leave it in the drawer
+              </button>
+            </div>
+
+            <p class="letter-form__confirmation" data-letter-confirmation hidden>
+              your letter has been placed gently among the others. it is resting here now.
+            </p>
+          </form>
+        </section>
+      </article>
+    </div>
+
     <script>
       /*
         EDIT HERE
@@ -502,6 +1198,11 @@
       const archiveConfig = {
         backgroundImage:
           "https://blogger.googleusercontent.com/img/a/AVvXsEirxfqRzMrHWAtGj6OvujiQLPzBkcAePHCzg-Jjvwl4Xn6HqqR7thXnzjfU_5AYRAbM5YAeinYmAaeiYHbF2EwW7JHR973a5sGce4aLcJfXvCIfxIBe864IXcZ1bgy_3veAX3LPh2HtinTCAVK1jSjtEk7ZW8x1cydzEjtMi0eAgFIYSHvy8j_elv1vWy4",
+        sharedDrawer: {
+          mode: "supabase",
+          supabaseUrl: "https://lkiaewfkgyfehlbfmjpz.supabase.co",
+          supabaseAnonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxraWFld2ZrZ3lmZWhsYmZtanB6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMDYyMjgsImV4cCI6MjA5MDc4MjIyOH0.kwsrYnRxlku9jYFNUpAGqouiyXy0LnCHyQB126mV7Jw",
+        },
         letters: [
           /*
             Letter template:
@@ -585,18 +1286,79 @@
       );
 
       const BACKGROUND_AUDIO_PATH = "assets/bgm.wav";
+      const DRAWER_STORAGE_KEY = "to-your-clementine-drawer-demo";
+      const drawerSeedLetters = [
+        {
+          id: "seed-home",
+          title: "gửi về một nơi từng là nhà",
+          from: "left here by someone in april",
+          to: "Gửi về một nơi từng là nhà,",
+          date: "april 3, 2026",
+          body:
+            "mình đã từng nghĩ nếu quay lại đúng con đường cũ, mình sẽ lại nhận ra mọi thứ ngay lập tức.\n\nnhưng có những nơi chỉ còn tồn tại vì mình vẫn nhớ về chúng. và có những điều chỉ còn là nhà trong lòng một người.",
+          signoff: "from someone still looking back,",
+          signature: "unsigned",
+        },
+        {
+          id: "seed-faraway",
+          title: "gửi cho một người ở rất xa",
+          from: "left here after midnight",
+          to: "Gửi cho một người ở rất xa,",
+          date: "april 3, 2026",
+          body:
+            "mình từng nghĩ khoảng cách chỉ là số đo giữa hai thành phố.\n\nbây giờ mình biết khoảng cách còn là tất cả những lần muốn kể cho cậu nghe một điều gì đó rồi lại thôi.",
+          signoff: "still carrying your name softly,",
+          signature: "unsigned",
+        },
+        {
+          id: "seed-unsaid",
+          title: "gửi những điều đã không được nói",
+          from: "left here in a quiet room",
+          to: "Gửi những điều đã không được nói,",
+          date: "april 3, 2026",
+          body:
+            "có những câu mình giữ lại quá lâu đến mức chúng trở thành một phần của mình.\n\nmình không biết liệu việc đặt chúng xuống ở đây có đủ để nhẹ hơn hay không, nhưng ít nhất chúng sẽ không còn phải ở một mình nữa.",
+          signoff: "for what stayed,",
+          signature: "unsigned",
+        },
+      ];
 
       const grid = document.querySelector(".letters-grid");
       const overlay = document.querySelector(".overlay");
       const closeButton = document.querySelector(".letter-modal__close");
       const envelopeImage = document.querySelector("[data-envelope-image]");
+      const drawerToggle = document.querySelector("[data-drawer-toggle]");
+      const writeToggle = document.querySelector("[data-write-toggle]");
       const musicToggle = document.querySelector("[data-music-toggle]");
+      const drawerOverlay = document.querySelector("[data-drawer-overlay]");
+      const drawerScene = document.querySelector("[data-drawer-scene]");
+      const drawerHint = document.querySelector("[data-drawer-hint]");
+      const drawerClose = document.querySelector("[data-drawer-close]");
+      const drawerLettersContainer = document.querySelector("[data-drawer-letters]");
+      const drawerReadClose = document.querySelector("[data-drawer-read-close]");
+      const writeOverlay = document.querySelector("[data-write-overlay]");
+      const writeScene = document.querySelector("[data-write-scene]");
+      const writeHint = document.querySelector("[data-write-hint]");
+      const writeClose = document.querySelector("[data-write-close]");
+      const letterForm = document.querySelector("[data-letter-form]");
+      const letterConfirmation = document.querySelector("[data-letter-confirmation]");
+      const drawerFields = {
+        from: document.querySelector("[data-drawer-from]"),
+        date: document.querySelector("[data-drawer-date]"),
+        to: document.querySelector("[data-drawer-to]"),
+        body: document.querySelector("[data-drawer-body]"),
+        signoff: document.querySelector("[data-drawer-signoff]"),
+        signature: document.querySelector("[data-drawer-signature]"),
+      };
       let audioContext;
       const paperTurnAudio = new Audio(
         "https://www.orangefreesounds.com/wp-content/uploads/2018/07/Page-turn-sound-effect.mp3"
       );
       paperTurnAudio.preload = "auto";
       paperTurnAudio.volume = 0.75;
+      const drawerOpenAudio = new Audio("assets/drawer-open.mp3");
+      drawerOpenAudio.preload = "auto";
+      drawerOpenAudio.volume = 0.4;
       const backgroundAudio = new Audio(BACKGROUND_AUDIO_PATH);
       backgroundAudio.preload = "auto";
       backgroundAudio.loop = true;
@@ -611,6 +1373,162 @@
         signoff: document.querySelector("[data-signoff]"),
         signature: document.querySelector("[data-signature]"),
       };
+
+      function mapLetterForStorage(letter) {
+        return {
+          id: letter.id,
+          title: letter.title,
+          from_name: letter.from,
+          to_line: letter.to,
+          body: letter.body,
+          signoff: letter.signoff,
+          signature: letter.signature,
+          created_at: letter.date,
+          status: "approved",
+        };
+      }
+
+      function mapStoredLetterToUi(record) {
+        const formattedDate = record.created_at
+          ? new Intl.DateTimeFormat("en-US", {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            }).format(new Date(record.created_at)).toLowerCase()
+          : "april 3, 2026";
+
+        return {
+          id: record.id,
+          title: record.title,
+          from: record.from_name,
+          to: record.to_line,
+          date: formattedDate,
+          body: record.body,
+          signoff: record.signoff,
+          signature: record.signature,
+        };
+      }
+
+      function getLocalDrawerDrafts() {
+        try {
+          return JSON.parse(window.localStorage.getItem(DRAWER_STORAGE_KEY) || "[]");
+        } catch (error) {
+          return [];
+        }
+      }
+
+      function setLocalDrawerDrafts(records) {
+        window.localStorage.setItem(DRAWER_STORAGE_KEY, JSON.stringify(records));
+      }
+
+      async function fetchSupabaseApprovedLetters() {
+        const response = await fetch(
+          `${archiveConfig.sharedDrawer.supabaseUrl}/rest/v1/letters?select=id,title,body,from_name,to_line,signoff,signature,created_at,status&status=eq.approved&order=created_at.desc&limit=12`,
+          {
+            headers: {
+              apikey: archiveConfig.sharedDrawer.supabaseAnonKey,
+              Authorization: `Bearer ${archiveConfig.sharedDrawer.supabaseAnonKey}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Could not load approved letters from Supabase.");
+        }
+
+        const records = await response.json();
+        const shuffled = [...records].sort(() => Math.random() - 0.5);
+        return shuffled.slice(0, 3);
+      }
+
+      async function submitSupabaseLetter(letter) {
+        const response = await fetch(
+          `${archiveConfig.sharedDrawer.supabaseUrl}/rest/v1/letters`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Prefer: "return=minimal",
+              apikey: archiveConfig.sharedDrawer.supabaseAnonKey,
+              Authorization: `Bearer ${archiveConfig.sharedDrawer.supabaseAnonKey}`,
+            },
+            body: JSON.stringify({
+              title: letter.title,
+              body: letter.body,
+              from_name: letter.from.replace(/^left here by /, ""),
+              to_line: letter.to,
+              signoff: letter.signoff,
+              signature: letter.signature,
+              status: "pending",
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Could not submit this letter to Supabase.");
+        }
+      }
+
+      async function fetchApprovedDrawerLetters() {
+        if (archiveConfig.sharedDrawer.mode === "supabase") {
+          const records = await fetchSupabaseApprovedLetters();
+          return records.map(mapStoredLetterToUi);
+        }
+
+        const stored = getLocalDrawerDrafts().map(mapStoredLetterToUi);
+        return [...stored, ...drawerSeedLetters].slice(0, 3);
+      }
+
+      async function submitDrawerLetter(letter) {
+        if (archiveConfig.sharedDrawer.mode === "supabase") {
+          await submitSupabaseLetter(letter);
+          return;
+        }
+
+        const current = getLocalDrawerDrafts();
+        const next = [mapLetterForStorage(letter), ...current].slice(0, 6);
+        setLocalDrawerDrafts(next);
+      }
+
+      function openDrawerLetter(letter) {
+        drawerFields.from.textContent = letter.from;
+        drawerFields.date.textContent = letter.date;
+        drawerFields.to.textContent = letter.to;
+        drawerFields.body.textContent = letter.body;
+        drawerFields.signoff.textContent = letter.signoff;
+        drawerFields.signature.textContent = letter.signature;
+        drawerOverlay.classList.add("is-reading-letter");
+      }
+
+      async function renderDrawerLetters() {
+        let letters = [];
+
+        try {
+          letters = await fetchApprovedDrawerLetters();
+        } catch (error) {
+          letters = drawerSeedLetters.slice(0, 3);
+        }
+
+        drawerLettersContainer.innerHTML = "";
+
+        letters.forEach((letter, index) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "drawer-letter";
+          button.style.setProperty("--rotation", `${index % 2 === 0 ? -3 : 2}deg`);
+          button.innerHTML = `
+            <span class="drawer-letter__icon">
+              <img
+                src="https://blogger.googleusercontent.com/img/a/AVvXsEi6j4wGEGYQw4_YrJy9FgnZwWVu75VN2IXTS097d-wtAm8RuSWwIrXie-f-Lgr8LNAxU3X0VhWTypGjuPgDE1QYnMW1f1gFbW8WY7QJJomeCkBjMYR2EjimqwwJKhqeSNi1WEFgBGUAIytbYnL44teLfhJ6ehEGnCPRakLYQcRiGgDMxRA1KA4W3qiFxcs"
+                alt="${letter.title}"
+              />
+            </span>
+            <span class="drawer-letter__title">${letter.title}</span>
+          `;
+          button.addEventListener("click", () => openDrawerLetter(letter));
+          drawerLettersContainer.appendChild(button);
+        });
+      }
 
       function openLetter(letter) {
         fields.title.textContent = letter.title;
@@ -629,6 +1547,53 @@
         });
       }
 
+      function syncModalState() {
+        const anyOpen = overlay.classList.contains("is-open")
+          || drawerOverlay.classList.contains("is-open")
+          || writeOverlay.classList.contains("is-open");
+        document.body.classList.toggle("modal-open", anyOpen);
+      }
+
+      function openDreamOverlay(overlayElement, toggleButton) {
+        overlayElement.hidden = false;
+        requestAnimationFrame(() => {
+          overlayElement.classList.add("is-open");
+          overlayElement.classList.remove("is-reading-letter");
+          syncModalState();
+          if (toggleButton) {
+            toggleButton.classList.add("is-open");
+          }
+        });
+      }
+
+      function closeDreamOverlay(overlayElement, toggleButton) {
+        overlayElement.classList.remove("is-reading-letter");
+        overlayElement.classList.remove("is-panel-open");
+        overlayElement.classList.remove("is-open");
+        if (toggleButton) {
+          toggleButton.classList.remove("is-open");
+        }
+        setTimeout(() => {
+          overlayElement.hidden = true;
+          syncModalState();
+        }, 400);
+      }
+
+      function openDreamPanel(overlayElement) {
+        if (overlayElement.hidden) {
+          return;
+        }
+
+        letterConfirmation.hidden = true;
+        overlayElement.classList.remove("is-reading-letter");
+        overlayElement.classList.add("is-panel-open");
+      }
+
+      function openDrawerInside() {
+        playDrawerOpenSfx();
+        openDreamPanel(drawerOverlay);
+      }
+
       function playPaperOpenSfx() {
         paperTurnAudio.currentTime = 0;
 
@@ -642,6 +1607,106 @@
         }
 
         playSynthPaperOpenSfx();
+      }
+
+      function playDrawerOpenSfx() {
+        drawerOpenAudio.currentTime = 0;
+
+        const playDrawerAudio = drawerOpenAudio.play();
+
+        if (playDrawerAudio && typeof playDrawerAudio.then === "function") {
+          playDrawerAudio.catch(() => {
+            playSynthDrawerOpenSfx();
+          });
+          return;
+        }
+
+        playSynthDrawerOpenSfx();
+      }
+
+      function playSynthDrawerOpenSfx() {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+
+        if (!AudioContextClass) {
+          return;
+        }
+
+        if (!audioContext) {
+          audioContext = new AudioContextClass();
+        }
+
+        if (audioContext.state === "suspended") {
+          audioContext.resume();
+        }
+
+        const now = audioContext.currentTime;
+
+        const woodThumpOsc = audioContext.createOscillator();
+        const woodThumpGain = audioContext.createGain();
+        const woodThumpFilter = audioContext.createBiquadFilter();
+        woodThumpOsc.type = "sine";
+        woodThumpOsc.frequency.setValueAtTime(110, now);
+        woodThumpOsc.frequency.exponentialRampToValueAtTime(58, now + 0.28);
+        woodThumpFilter.type = "lowpass";
+        woodThumpFilter.frequency.setValueAtTime(620, now);
+        woodThumpGain.gain.setValueAtTime(0.0001, now);
+        woodThumpGain.gain.exponentialRampToValueAtTime(0.12, now + 0.02);
+        woodThumpGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.32);
+        woodThumpOsc.connect(woodThumpFilter);
+        woodThumpFilter.connect(woodThumpGain);
+        woodThumpGain.connect(audioContext.destination);
+
+        const woodNoiseBuffer = audioContext.createBuffer(
+          1,
+          audioContext.sampleRate * 0.42,
+          audioContext.sampleRate
+        );
+        const woodNoise = woodNoiseBuffer.getChannelData(0);
+        for (let i = 0; i < woodNoise.length; i += 1) {
+          const grain = Math.sin(i / 18) * 0.15 + Math.sin(i / 43) * 0.08;
+          woodNoise[i] = ((Math.random() * 2 - 1) * 0.46 + grain) * (1 - i / woodNoise.length);
+        }
+
+        const woodSource = audioContext.createBufferSource();
+        woodSource.buffer = woodNoiseBuffer;
+        const woodBandpass = audioContext.createBiquadFilter();
+        woodBandpass.type = "bandpass";
+        woodBandpass.frequency.setValueAtTime(380, now);
+        woodBandpass.Q.setValueAtTime(0.7, now);
+        const woodLowpass = audioContext.createBiquadFilter();
+        woodLowpass.type = "lowpass";
+        woodLowpass.frequency.setValueAtTime(980, now);
+        const woodGain = audioContext.createGain();
+        woodGain.gain.setValueAtTime(0.0001, now);
+        woodGain.gain.exponentialRampToValueAtTime(0.055, now + 0.025);
+        woodGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.38);
+        woodSource.connect(woodBandpass);
+        woodBandpass.connect(woodLowpass);
+        woodLowpass.connect(woodGain);
+        woodGain.connect(audioContext.destination);
+
+        const creakOsc = audioContext.createOscillator();
+        const creakGain = audioContext.createGain();
+        const creakFilter = audioContext.createBiquadFilter();
+        creakOsc.type = "sawtooth";
+        creakOsc.frequency.setValueAtTime(210, now + 0.04);
+        creakOsc.frequency.exponentialRampToValueAtTime(118, now + 0.36);
+        creakFilter.type = "bandpass";
+        creakFilter.frequency.setValueAtTime(520, now);
+        creakFilter.Q.setValueAtTime(1.1, now);
+        creakGain.gain.setValueAtTime(0.0001, now + 0.02);
+        creakGain.gain.exponentialRampToValueAtTime(0.028, now + 0.08);
+        creakGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.4);
+        creakOsc.connect(creakFilter);
+        creakFilter.connect(creakGain);
+        creakGain.connect(audioContext.destination);
+
+        woodThumpOsc.start(now);
+        woodThumpOsc.stop(now + 0.32);
+        woodSource.start(now + 0.01);
+        woodSource.stop(now + 0.4);
+        creakOsc.start(now + 0.03);
+        creakOsc.stop(now + 0.4);
       }
 
       function syncMusicButtonState() {
@@ -802,9 +1867,9 @@
       function closeLetter() {
         overlay.classList.remove("is-letter-open");
         overlay.classList.remove("is-open");
-        document.body.classList.remove("modal-open");
         setTimeout(() => {
           overlay.hidden = true;
+          syncModalState();
         }, 450);
       }
 
@@ -832,12 +1897,88 @@
       });
 
       closeButton.addEventListener("click", closeLetter);
+      drawerToggle.addEventListener("click", async () => {
+        await renderDrawerLetters();
+        openDreamOverlay(drawerOverlay, drawerToggle);
+      });
+      writeToggle.addEventListener("click", () => openDreamOverlay(writeOverlay, writeToggle));
+      drawerScene.addEventListener("click", openDrawerInside);
+      drawerHint.addEventListener("click", openDrawerInside);
+      writeScene.addEventListener("click", () => openDreamPanel(writeOverlay));
+      writeScene.addEventListener("pointerup", () => openDreamPanel(writeOverlay));
+      writeHint.addEventListener("click", () => openDreamPanel(writeOverlay));
+      drawerClose.addEventListener("click", () => closeDreamOverlay(drawerOverlay, drawerToggle));
+      drawerReadClose.addEventListener("click", () => {
+        drawerOverlay.classList.remove("is-reading-letter");
+      });
+      writeClose.addEventListener("click", () => closeDreamOverlay(writeOverlay, writeToggle));
+      drawerOverlay.addEventListener("click", (event) => {
+        if (event.target === drawerOverlay) {
+          closeDreamOverlay(drawerOverlay, drawerToggle);
+        }
+      });
+      writeOverlay.addEventListener("click", (event) => {
+        if (event.target === writeOverlay) {
+          closeDreamOverlay(writeOverlay, writeToggle);
+        }
+      });
       musicToggle.addEventListener("click", toggleBackgroundMusic);
       syncMusicButtonState();
+
+      letterForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const formData = new FormData(letterForm);
+        const title = (formData.get("title") || "").toString().trim();
+        const body = (formData.get("letter") || "").toString().trim();
+        const from = (formData.get("from") || "").toString().trim();
+
+        if (!title || !body) {
+          return;
+        }
+
+        try {
+          await submitDrawerLetter({
+            id: `letter-${Date.now()}`,
+            title,
+            from: from ? `left here by ${from}` : "left here anonymously",
+            to: `${title.charAt(0).toUpperCase()}${title.slice(1)},`,
+            date: new Intl.DateTimeFormat("en-US", {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            }).format(new Date()).toLowerCase(),
+            body,
+            signoff: from ? "with what was never sent," : "unsigned,",
+            signature: from || "unsigned",
+          });
+          await renderDrawerLetters();
+          letterConfirmation.textContent =
+            "lá thư của cậu đã được đặt vào ngăn kéo. khi được duyệt, nó sẽ xuất hiện ở đây.";
+        } catch (error) {
+          letterConfirmation.textContent =
+            "mình chưa thể đặt lá thư này vào ngăn kéo ngay bây giờ. hãy thử lại sau nhé.";
+        }
+
+        letterConfirmation.hidden = false;
+        letterForm.reset();
+      });
+      letterForm.addEventListener("input", () => {
+        letterConfirmation.hidden = true;
+      });
 
       document.addEventListener("keydown", (event) => {
         if (event.key === "Escape" && overlay.classList.contains("is-open")) {
           closeLetter();
+          return;
+        }
+
+        if (event.key === "Escape" && drawerOverlay.classList.contains("is-open")) {
+          closeDreamOverlay(drawerOverlay, drawerToggle);
+          return;
+        }
+
+        if (event.key === "Escape" && writeOverlay.classList.contains("is-open")) {
+          closeDreamOverlay(writeOverlay, writeToggle);
         }
       });
 
